@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediAnalytica | Advanced Medical Analysis Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2a5bd7;
+            --primary-dark: #1e3fa0;
+            --secondary: #00b894;
+            --accent: #fd7e14;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            color: var(--dark);
+            background-color: #f9fbfd;
+            line-height: 1.6;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        ul {
+            list-style: none;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #00a085;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background-color: #e06c00;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        nav ul {
+            display: flex;
+            gap: 30px;
+        }
+        
+        nav a {
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: var(--transition);
+            padding: 5px 0;
+            position: relative;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        nav a.active {
+            color: var(--primary);
+        }
+        
+        nav a.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f0f5ff 0%, #e6f7ff 100%);
+            padding: 100px 0;
+            overflow: hidden;
+        }
+        
+        .hero-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        
+        .hero-content {
+            flex: 1;
+        }
+        
+        .hero-content h2 {
+            font-size: 3.2rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .hero-content h2 span {
+            color: var(--primary);
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .features-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: var(--light);
+            border-radius: 10px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--light-gray);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(42, 91, 215, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+        }
+        
+        .feature-icon i {
+            font-size: 2.2rem;
+            color: var(--primary);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        /* Pages Section */
+        .pages {
+            padding: 100px 0;
+            background-color: #f8fafc;
+        }
+        
+        .pages-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .page-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .page-btn {
+            padding: 15px 30px;
+            background-color: white;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .page-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .page-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 900px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .page h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .page p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+        
+        .page-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .page-feature {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        /* Iframe Styles */
+        .iframe-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .iframe-container.active {
+            display: block;
+        }
+        
+        .tool-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: var(--light-gray);
+            color: var(--dark);
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .back-button:hover {
+            background-color: var(--gray);
+            color: white;
+        }
+        
+        /* About Section */
+        .about {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .about-container {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        
+        .about-image {
+            flex: 1;
+        }
+        
+        .about-image img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .about-content {
+            flex: 1;
+        }
+        
+        .about-content h3 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .about-content p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 80px 0 30px;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        .footer-column p {
+            color: #b2b2b2;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: #b2b2b2;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .contact-info li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #b2b2b2;
+        }
+        
+        .contact-info i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #b2b2b2;
+            font-size: 0.95rem;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero-container, .about-container {
+                flex-direction: column;
+            }
+            
+            .hero-content, .about-content {
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .hero-content h2 {
+                font-size: 2.8rem;
+            }
+            
+            .tool-iframe {
+                height: 500px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+            
+            nav ul {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+                z-index: 999;
+            }
+            
+            nav ul.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .hero-content h2 {
+                font-size: 2.4rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .page-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .page-content {
+                padding: 30px 20px;
+            }
+            
+            .tool-iframe {
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+            
+            .btn, .page-btn {
+                padding: 10px 20px;
+                width: 100%;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .feature-card {
+                padding: 30px 20px;
+            }
+            
+            .tool-iframe {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-stethoscope"></i>
+                <h1>Medi<span>Analytica</span></h1>
+            </div>
+            
+            <div class="mobile-toggle" id="mobileToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            
+            <nav>
+                <ul id="navMenu">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h2>Advanced <span>Medical Analysis</span> for Better Healthcare</h2>
+                <p>Our AI-powered platform provides accurate medical document analysis, prescription processing, and rare disease detection to support healthcare professionals in making informed decisions.</p>
+                <div class="hero-buttons">
+                    <a href="#tools" class="btn">Explore Tools</a>
+                    <a href="#contact" class="btn btn-secondary">Contact Us</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <!-- Using FontAwesome icon as placeholder image -->
+                <div style="font-size: 18rem; color: var(--primary); opacity: 0.8;">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose MediAnalytica?</h2>
+                <p>Our platform combines cutting-edge technology with medical expertise to deliver reliable analysis tools for healthcare providers.</p>
+            </div>
+            
+            <div class="features-container">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>HIPAA Compliant</h3>
+                    <p>All data is encrypted and stored securely, ensuring full compliance with healthcare privacy regulations.</p>
+                    <a href="#" class="btn btn-secondary">Learn More</a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Advanced machine learning algorithms provide accurate and fast analysis of medical documents and images.</p>
+                    <a href="#" class="btn btn-secondary">Learn More</a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Real-Time Processing</h3>
+                    <p>Get instant results with our high-performance processing engine that reduces analysis time by up to 80%.</p>
+                    <a href="#" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools/Pages Section -->
+    <section class="pages" id="tools">
+        <div class="container pages-container">
+            <div class="section-title">
+                <h2>Our Medical Analysis Tools</h2>
+                <p>Access our specialized tools for medical document analysis, prescription processing, and rare disease detection.</p>
+            </div>
+            
+            <div class="page-buttons">
+                <button class="page-btn active" data-page="medical">
+                    <i class="fas fa-file-medical"></i> Medical Document Analyzer
+                </button>
+                <button class="page-btn" data-page="prescription">
+                    <i class="fas fa-prescription-bottle-alt"></i> Prescription Processor
+                </button>
+                <button class="page-btn" data-page="rare">
+                    <i class="fas fa-search-plus"></i> Rare Disease Detection
+                </button>
+            </div>
+            
+            <div class="page-content">
+                <!-- Medical Document Analyzer Page -->
+                <div class="page active" id="medical-page">
+                    <h3><i class="fas fa-file-medical"></i> Medical Document Analyzer</h3>
+                    <p>Upload and analyze medical documents including lab reports, patient histories, and clinical notes. Our AI extracts key information and identifies patterns to support clinical decision-making.</p>
+                    
+                    <div class="page-features">
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Text Extraction</h4>
+                            <p>Accurately extract text from scanned documents and PDFs with OCR technology.</p>
+                        </div>
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Data Structuring</h4>
+                            <p>Organize extracted information into structured formats for easy review.</p>
+                        </div>
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Anomaly Detection</h4>
+                            <p>Identify abnormal values and potential concerns in medical reports.</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="launch-medical">Launch Medical Document Analyzer</button>
+                </div>
+                
+                <!-- Prescription Processor Page -->
+                <div class="page" id="prescription-page">
+                    <h3><i class="fas fa-prescription-bottle-alt"></i> Prescription Processor</h3>
+                    <p>Process and validate prescriptions to reduce medication errors. Check for drug interactions, appropriate dosages, and patient-specific contraindications.</p>
+                    
+                    <div class="page-features">
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Drug Interaction Check</h4>
+                            <p>Identify potential interactions between prescribed medications.</p>
+                        </div>
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Dosage Validation</h4>
+                            <p>Verify appropriate dosages based on patient age, weight, and condition.</p>
+                        </div>
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Allergy Detection</h4>
+                            <p>Check prescribed medications against known patient allergies.</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-accent" id="launch-prescription">Launch Prescription Processor</button>
+                </div>
+                
+                <!-- Rare Disease Detection Page -->
+                <div class="page" id="rare-page">
+                    <h3><i class="fas fa-search-plus"></i> Rare Disease Detection</h3>
+                    <p>Identify potential rare diseases based on symptoms, medical history, and test results. Our system compares patient data against thousands of rare disease profiles.</p>
+                    
+                    <div class="page-features">
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Symptom Analysis</h4>
+                            <p>Analyze symptom patterns to identify potential rare conditions.</p>
+                        </div>
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Genetic Correlation</h4>
+                            <p>Cross-reference genetic markers with known rare disease databases.</p>
+                        </div>
+                        <div class="page-feature">
+                            <h4><i class="fas fa-check-circle"></i> Specialist Recommendations</h4>
+                            <p>Suggest appropriate specialists based on detected condition probabilities.</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary" id="launch-rare">Launch Rare Disease Detection</button>
+                </div>
+                
+                <!-- Iframe Container for Loading HTML Files -->
+                <div class="iframe-container" id="iframe-container">
+                    <button class="back-button" id="back-button">
+                        <i class="fas fa-arrow-left"></i> Back to Tools Overview
+                    </button>
+                    <iframe class="tool-iframe" id="tool-iframe" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container about-container">
+            <div class="about-image">
+                <!-- Using FontAwesome icon as placeholder image -->
+                <div style="font-size: 15rem; color: var(--secondary); opacity: 0.8; text-align: center;">
+                    <i class="fas fa-user-md"></i>
+                </div>
+            </div>
+            <div class="about-content">
+                <h3>About MediAnalytica</h3>
+                <p>MediAnalytica was founded in 2020 by a team of medical professionals and AI researchers with a mission to improve healthcare outcomes through technology.</p>
+                <p>Our platform is now used by over 500 healthcare facilities across 12 countries, helping doctors make faster, more accurate decisions.</p>
+                <p>We continuously update our algorithms with the latest medical research to ensure our tools remain at the forefront of medical technology.</p>
+                <a href="#contact" class="btn">Contact Our Team</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>MediAnalytica</h3>
+                    <p>Advanced medical analysis tools for healthcare professionals. Combining AI technology with medical expertise to improve patient outcomes.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#tools">Tools</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Our Tools</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="tool-link" data-tool="medical">Medical Document Analyzer</a></li>
+                        <li><a href="#" class="tool-link" data-tool="prescription">Prescription Processor</a></li>
+                        <li><a href="#" class="tool-link" data-tool="rare">Rare Disease Detection</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                        <li><a href="#">Integration Guide</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Medical Plaza, Health District, NY 10001</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> contact@mediana.lytica.com</li>
+                        <li><i class="fas fa-clock"></i> Mon-Fri: 9:00 AM - 6:00 PM EST</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 MediAnalytica. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileToggle.querySelector('i').classList.toggle('fa-bars');
+            mobileToggle.querySelector('i').classList.toggle('fa-times');
+        });
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                mobileToggle.querySelector('i').classList.add('fa-bars');
+                mobileToggle.querySelector('i').classList.remove('fa-times');
+            });
+        });
+        
+        // Page Switching Functionality
+        const pageButtons = document.querySelectorAll('.page-btn');
+        const pages = document.querySelectorAll('.page');
+        const iframeContainer = document.getElementById('iframe-container');
+        const toolIframe = document.getElementById('tool-iframe');
+        const backButton = document.getElementById('back-button');
+        const pageContent = document.querySelector('.page-content');
+        
+        // Define your HTML file paths
+        const htmlFiles = {
+            medical: 'Medical.html',
+            prescription: 'test.html',
+            rare: 'med_html_css.html'
+        };
+        
+        // Function to load an HTML file into the iframe
+        function loadHtmlFile(pageId) {
+            const fileName = htmlFiles[pageId];
+            
+            if (fileName) {
+                // Hide all pages and show iframe
+                pages.forEach(page => page.classList.remove('active'));
+                iframeContainer.classList.add('active');
+                
+                // Load the HTML file into the iframe
+                toolIframe.src = fileName;
+                
+                // Update URL hash for direct linking
+                window.location.hash = `tools-${pageId}`;
+            } else {
+                alert(`HTML file for ${pageId} not found. Please make sure the file exists.`);
+            }
+        }
+        
+        // Function to go back to tool overview
+        function goBackToOverview() {
+            iframeContainer.classList.remove('active');
+            toolIframe.src = ''; // Clear iframe source
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show the first page (medical) by default
+            document.getElementById('medical-page').classList.add('active');
+            
+            // Reset buttons to show medical as active
+            pageButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.page-btn[data-page="medical"]').classList.add('active');
+            
+            // Update URL hash
+            window.location.hash = 'tools';
+        }
+        
+        // Tool launch buttons - now they load the actual HTML files
+        document.getElementById('launch-medical').addEventListener('click', () => {
+            loadHtmlFile('medical');
+            // Update button states
+            pageButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.page-btn[data-page="medical"]').classList.add('active');
+        });
+        
+        document.getElementById('launch-prescription').addEventListener('click', () => {
+            loadHtmlFile('prescription');
+            // Update button states
+            pageButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.page-btn[data-page="prescription"]').classList.add('active');
+        });
+        
+        document.getElementById('launch-rare').addEventListener('click', () => {
+            loadHtmlFile('rare');
+            // Update button states
+            pageButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.page-btn[data-page="rare"]').classList.add('active');
+        });
+        
+        // Page buttons - also load the HTML files
+        pageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetPage = button.getAttribute('data-page');
+                
+                // Update active button
+                pageButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Load the HTML file
+                loadHtmlFile(targetPage);
+            });
+        });
+        
+        // Back button functionality
+        backButton.addEventListener('click', goBackToOverview);
+        
+        // Footer tool links
+        document.querySelectorAll('.tool-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tool = link.getAttribute('data-tool');
+                
+                // Update active button and load the HTML file
+                pageButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.page-btn[data-page="${tool}"]`).classList.add('active');
+                
+                loadHtmlFile(tool);
+                
+                // Scroll to tools section
+                document.getElementById('tools').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        // Handle hash on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            
+            if (hash.includes('tools-')) {
+                const tool = hash.replace('#tools-', '');
+                const button = document.querySelector(`.page-btn[data-page="${tool}"]`);
+                
+                if (button) {
+                    button.click();
+                }
+            }
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+        
+        // Update active nav link on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Handle iframe loading state
+        toolIframe.addEventListener('load', function() {
+            // You can add loading indicators or other logic here
+            console.log('Iframe loaded successfully');
+            
+            // Try to adjust iframe height based on content
+            try {
+                // This might be blocked by CORS, but we try anyway
+                const iframeDoc = toolIframe.contentDocument || toolIframe.contentWindow.document;
+                if (iframeDoc.body) {
+                    toolIframe.style.height = iframeDoc.body.scrollHeight + 'px';
+                }
+            } catch (e) {
+                // CORS error - can't access iframe document from different origin
+                // Keep the default height
+            }
+        });
+        
+        toolIframe.addEventListener('error', function() {
+            console.error('Failed to load iframe content');
+            alert('Failed to load the tool. Please make sure the HTML file exists and is accessible.');
+            goBackToOverview();
+        });
+    </script>
+</body>
+</html>

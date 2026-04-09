@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Register | Smart Health Assistant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *{
+  box-sizing:border-box;
+  font-family:Segoe UI,system-ui,sans-serif;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:#f4f6fb;
+}
+
+/* ===== MAIN WRAPPER ===== */
+.auth-wrapper{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ===== LEFT LOGO ===== */
+.auth-left{
+  flex:1;
+background-color: #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.auth-left img{
+  max-width:100%;
+  height:auto;
+  border-radius: 50px;
+}
+
+/* ===== RIGHT CONTENT ===== */
+.auth-right{
+  flex:1;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;   /* was 40px */
+}
+
+.auth-box{
+  width:100%;
+  max-width:380px;
+}
+
+/* ===== FORM ===== */
+.auth-box h2{
+  color:#007d96;
+  margin-bottom:20px;
+}
+
+.auth-box input{
+  width:100%;
+  padding:12px;
+  margin-bottom:14px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.auth-box button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#007d96;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+  transition: ease-in-out 0.3s;
+}
+.auth-box button:hover{
+  background-color:#5f939e;
+}
+
+.auth-box a{
+  display:block;
+  margin-top:14px;
+  text-align:center;
+  text-decoration:none;
+  color:#007d96;
+  transition: ease-in-out 0.3s;
+  
+}
+.auth-box a:hover{
+  color:#5f939e;
+}
+
+/* ===== RESPONSIVE BELOW 720px ===== */
+@media (max-width:720px){
+  .auth-wrapper{
+    flex-direction:column;
+  }
+
+  .auth-left{
+    min-height:220px;
+  }
+
+  .auth-right{
+    padding:24px;
+  }
+}
+.guest-btn{
+  width:100%;
+  height:44px;
+  border:2px solid #007d96;
+  border-radius:10px;
+  background:#ffffff;
+  color:#007d96;
+  font-size:16px;
+  text-decoration:none;
+  transition:0.3s;
+}
+
+.guest-btn:hover{
+  background:#5f939e;
+  color:#ffffff;
+  border-color:#5f939e;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="auth-wrapper">
+
+  <div class="auth-left">
+    <img src="logo.jpg" alt="App Logo">
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-box">
+      <h2>Create Account</h2>
+
+      <input id="email" type="email" placeholder="Email">
+      <input id="password" type="password" placeholder="Password">
+
+     <button id="registerBtn" onclick="register()">Register</button>
+
+
+
+<a href="index.html" class="guest-btn" style="margin-top:14px; display:block; text-align:center; line-height:44px;">
+  Continue as Guest
+</a>
+
+
+<a href="login.html">Already have an account?</a>
+
+    </div>
+  </div>
+
+</div>
+<!-- 1️⃣ Load Supabase library -->
+<!-- 1️⃣ Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 2️⃣ Your shared client.js -->
+<script src="client.js"></script>
+
+<!-- 3️⃣ Page-specific logic -->
+<script>
+async function register(){
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const btn = document.getElementById("registerBtn");
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  if(!email || !password){
+    alert("Email and password are required");
+    return;
+  }
+
+  /* 🛑 HARD SAFETY CHECK */
+  if (!window.supabase || !window.supabase.auth) {
+    alert("Supabase not initialized. Check script order.");
+    console.error("Supabase object:", window.supabase);
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = "Registering...";
+  btn.style.opacity = "0.7";
+  btn.style.cursor = "not-allowed";
+
+  const { error } = await window.supabase.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      emailRedirectTo: window.location.href.replace(
+        "register.html",
+        "otp.html"
+      )
+    }
+  });
+
+  if(error){
+    alert(error.message);
+    btn.disabled = false;
+    btn.innerText = "Register";
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+    return;
+  }
+
+  window.location.href = "otp.html?email=" + encodeURIComponent(email);
+}
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Document Analyzer | MediAnalytica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0d47a1;
+            --primary-light: #5c6bc0;
+            --primary-dark: #002984;
+            --secondary: #26a69a;
+            --success: #2e7d32;
+            --warning: #f57c00;
+            --danger: #c62828;
+            --light: #f5f7fa;
+            --dark: #1a237e;
+            --gray: #546e7a;
+            --border: #cfd8dc;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ====== HEADER STYLES ====== */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* ====== FORM CONTAINER ====== */
+        .form-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* ====== UPLOAD AREA ====== */
+        .upload-area {
+            border: 3px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(13, 71, 161, 0.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+        }
+
+        /* ====== BUTTONS ====== */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #00897b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* ====== RESULTS STYLING ====== */
+        .results-container {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .result-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        .badge-primary { background: #cce5ff; color: #004085; }
+
+        /* ====== DISEASE CARD ====== */
+        .disease-card {
+            background: var(--light);
+            border-radius: var(--radius-sm);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .disease-card.high { border-left-color: var(--danger); }
+        .disease-card.medium { border-left-color: var(--warning); }
+        .disease-card.low { border-left-color: var(--success); }
+
+        .disease-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .disease-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .possibility-badge {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: white;
+        }
+
+        .high .possibility-badge { background: var(--danger); }
+        .medium .possibility-badge { background: var(--warning); }
+        .low .possibility-badge { background: var(--success); }
+
+        .symptoms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .symptom-item {
+            background: white;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            border: 1px solid var(--border);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .symptom-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .detail-section {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        .detail-section h4 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ====== DOCTOR CARDS ====== */
+        .doctor-card {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--secondary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .doctor-name {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .doctor-specialty {
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        /* ====== ALERTS ====== */
+        .alert {
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        /* ====== LOADING ====== */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ====== RESPONSIVE STYLES ====== */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .symptoms-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .btn {
+                padding: 10px 20px;
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* ====== UTILITY CLASSES ====== */
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .text-center { text-align: center; }
+        .hidden { display: none; }
+
+        /* ====== SCROLLBAR ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ====== PRINT STYLES ====== */
+        @media print {
+            .form-container,
+            .action-buttons,
+            button {
+                display: none !important;
+            }
+            
+            .result-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-heartbeat"></i> Medical Document Analyzer</h1>
+            <p>Upload medical documents and describe symptoms for AI-powered analysis</p>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <form id="analysis-form">
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-file-medical"></i> Medical Document</label>
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Drag & Drop Your Medical File Here</h3>
+                        <p>Supported formats: PDF, PNG, JPG, TXT (Max: 10MB)</p>
+                        <input type="file" name="file" id="file-input" accept=".pdf,.png,.jpg,.jpeg,.txt">
+                        <button type="button" class="btn btn-secondary mt-20" onclick="document.getElementById('file-input').click()">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                    </div>
+                    <div class="file-list" id="file-list"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-user"></i> Main Symptoms</label>
+                        <input type="text" class="form-control" id="main_symptoms" 
+                               placeholder="e.g., fever, cough, headache">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-plus-circle"></i> Additional Symptoms</label>
+                        <input type="text" class="form-control" id="additional_symptoms" 
+                               placeholder="e.g., nausea, dizziness, fatigue">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-allergies"></i> Allergies</label>
+                    <input type="text" class="form-control" id="allergies" 
+                           placeholder="e.g., penicillin, aspirin, peanuts">
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Important:</strong> This tool provides AI-generated insights for informational purposes only. 
+                        Always consult qualified healthcare professionals for medical diagnosis and treatment.
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-primary" id="analyze-btn">
+                        <i class="fas fa-search"></i> Analyze Document
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="clearMedicalForm()">
+                        <i class="fas fa-redo"></i> Clear Form
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <h3>Analyzing Medical Document...</h3>
+            <p>Processing your file and consulting AI models. This may take a moment.</p>
+        </div>
+
+        <!-- Results Container -->
+        <div class="results-container" id="results-container">
+            <!-- Results will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // ====== FILE UPLOAD FUNCTIONALITY ======
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const loading = document.getElementById('loading');
+        const resultsContainer = document.getElementById('results-container');
+        
+        // File upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#0d47a1';
+            uploadArea.style.background = 'rgba(13, 71, 161, 0.05)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#cfd8dc';
+            uploadArea.style.background = '#f5f7fa';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#cfd8dc';
+            uploadArea.style.background = '#f5f7fa';
+            
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileList();
+            }
+        });
+        
+        fileInput.addEventListener('change', updateFileList);
+        
+        function updateFileList() {
+            fileList.innerHTML = '';
+            if (fileInput.files.length > 0) {
+                Array.from(fileInput.files).forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <div>
+                            <strong>${file.name}</strong>
+                            <br>
+                            <small>${formatFileSize(file.size)}</small>
+                        </div>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // ====== ANALYSIS FUNCTIONALITY ======
+        analyzeBtn.addEventListener('click', analyzeMedicalDocument);
+        
+        function analyzeMedicalDocument() {
+            const mainSymptoms = document.getElementById('main_symptoms').value;
+            
+            if (!mainSymptoms && (!fileInput.files || fileInput.files.length === 0)) {
+                alert('Please enter symptoms or upload a medical document');
+                return;
+            }
+            
+            loading.classList.add('show');
+            resultsContainer.classList.remove('show');
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                loading.classList.remove('show');
+                displayMedicalResults();
+            }, 2000);
+        }
+        
+        function displayMedicalResults() {
+            const sampleData = {
+                disease_analysis: [
+                    {
+                        name: "Upper Respiratory Infection",
+                        possibility: "High",
+                        brief_symptoms: ["fever", "cough", "fatigue"],
+                        details: "Common viral infection affecting the nose, throat, and airways. Usually self-limiting and resolves within 7-10 days.",
+                        additional_symptoms: ["sore throat", "runny nose", "body aches"]
+                    },
+                    {
+                        name: "Seasonal Allergies",
+                        possibility: "Medium",
+                        brief_symptoms: ["fatigue", "headache"],
+                        details: "Allergic reaction to pollen or other environmental allergens. Common during seasonal changes.",
+                        additional_symptoms: ["sneezing", "itchy eyes", "nasal congestion"]
+                    },
+                    {
+                        name: "Influenza",
+                        possibility: "Low",
+                        brief_symptoms: ["fever", "body aches", "fatigue"],
+                        details: "Viral infection that attacks your respiratory system. More severe than common cold.",
+                        additional_symptoms: ["chills", "sweating", "loss of appetite"]
+                    }
+                ],
+                top_symptoms: ["fever", "cough", "headache", "fatigue", "body aches"],
+                recommended_doctors: ["Dr. Sarah Johnson (General Practitioner)", "Dr. Michael Chen (Internal Medicine)", "Dr. Emily Rodriguez (Infectious Disease Specialist)"]
+            };
+            
+            resultsContainer.innerHTML = generateMedicalResultsHTML(sampleData);
+            resultsContainer.classList.add('show');
+            
+            // Scroll to results
+            resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function generateMedicalResultsHTML(data) {
+            let html = '';
+            
+            // Success message
+            html += `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Analysis Complete!</strong> Your medical document has been analyzed successfully.
+                    </div>
+                </div>
+                
+                <!-- Report Header -->
+                <div class="result-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);">
+                    <div class="result-header">
+                        <h2 class="result-title">
+                            <i class="fas fa-file-medical-alt"></i> Medical Analysis Report
+                        </h2>
+                        <div class="badge badge-primary">
+                            ${new Date().toLocaleDateString()}
+                        </div>
+                    </div>
+                    <p style="color: #546e7a; font-size: 1.1rem;">
+                        Based on your symptoms and medical document analysis, here are the findings:
+                    </p>
+                </div>
+            `;
+            
+            // Disease Analysis Section
+            if (data.disease_analysis && data.disease_analysis.length > 0) {
+                html += `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h2 class="result-title">
+                                <i class="fas fa-diagnoses"></i> Potential Conditions
+                            </h2>
+                            <div class="badge badge-info">
+                                ${data.disease_analysis.length} conditions identified
+                            </div>
+                        </div>
+                        
+                        <div class="diseases-container">
+                `;
+                
+                data.disease_analysis.forEach((disease) => {
+                    const possibility = disease.possibility.toLowerCase();
+                    
+                    html += `
+                        <div class="disease-card ${possibility}">
+                            <div class="disease-header">
+                                <div>
+                                    <h3 class="disease-name">${disease.name}</h3>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px;">
+                                        ${disease.brief_symptoms && disease.brief_symptoms.length > 0 ? 
+                                            disease.brief_symptoms.map(symptom => `
+                                                <span class="badge badge-primary">${symptom}</span>
+                                            `).join('') : ''
+                                        }
+                                    </div>
+                                </div>
+                                <span class="possibility-badge">${disease.possibility}</span>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <h4><i class="fas fa-info-circle"></i> Analysis</h4>
+                                <p style="line-height: 1.7; color: #333;">${disease.details}</p>
+                            </div>
+                            
+                            ${disease.additional_symptoms && disease.additional_symptoms.length > 0 ? `
+                            <div class="detail-section">
+                                <h4><i class="fas fa-eye"></i> Additional Symptoms to Monitor</h4>
+                                <div class="symptoms-grid">
+                                    ${disease.additional_symptoms.map(symptom => `
+                                        <div class="symptom-item">
+                                            <i class="fas fa-bell"></i> ${symptom}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Top Symptoms Section
+            if (data.top_symptoms && data.top_symptoms.length > 0) {
+                html += `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h2 class="result-title">
+                                <i class="fas fa-chart-line"></i> Key Symptoms Identified
+                            </h2>
+                            <div class="badge badge-info">
+                                ${data.top_symptoms.length} key symptoms
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <div class="symptoms-grid">
+                                ${data.top_symptoms.map((symptom, index) => {
+                                    const colors = ['#0d47a1', '#1565c0', '#1976d2', '#2196f3', '#64b5f6'];
+                                    const color = colors[index % colors.length];
+                                    return `
+                                        <div class="symptom-item" style="
+                                            border-color: ${color}40;
+                                            background: ${color}10;
+                                            color: ${color};
+                                        ">
+                                            <i class="fas fa-${getSymptomIcon(symptom)}"></i>
+                                            <strong>${symptom}</strong>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Recommended Doctors Section
+            if (data.recommended_doctors && data.recommended_doctors.length > 0) {
+                html += `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h2 class="result-title">
+                                <i class="fas fa-user-md"></i> Recommended Specialists
+                            </h2>
+                            <div class="badge badge-info">
+                                ${data.recommended_doctors.length} specialists
+                            </div>
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            ${data.recommended_doctors.map(doctor => {
+                                const match = doctor.match(/\((.*?)\)/);
+                                const doctorName = match ? doctor.substring(0, doctor.indexOf('(')).trim() : doctor;
+                                const specialty = match ? match[1] : 'Medical Specialist';
+                                
+                                return `
+                                    <div class="doctor-card">
+                                        <div class="doctor-name">
+                                            <i class="fas fa-stethoscope"></i> ${doctorName}
+                                        </div>
+                                        <div class="doctor-specialty">
+                                            ${specialty}
+                                        </div>
+                                        <div style="margin-top: 10px;">
+                                            <button class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">
+                                                <i class="fas fa-calendar-check"></i> Schedule Consultation
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Important Disclaimer
+            html += `
+                <div class="result-card" style="background: #fff3cd; border-left-color: #f57c00;">
+                    <div style="display: flex; align-items: flex-start; gap: 15px;">
+                        <i class="fas fa-exclamation-triangle" style="color: #f57c00; font-size: 1.5rem;"></i>
+                        <div>
+                            <h3 style="color: #856404; margin-bottom: 10px;">
+                                ⚠️ Important Medical Disclaimer
+                            </h3>
+                            <p style="color: #333; line-height: 1.7;">
+                                This analysis is generated by artificial intelligence and is for informational purposes only. 
+                                <strong>It is not a medical diagnosis.</strong> The information provided should not be used 
+                                as a substitute for professional medical advice, diagnosis, or treatment. 
+                                Always seek the advice of your physician or other qualified health provider with any questions 
+                                you may have regarding a medical condition.
+                            </p>
+                            <div style="margin-top: 15px; padding: 10px; background: #fff8e1; border-radius: 5px;">
+                                <strong style="color: #856404;">Emergency Warning Signs:</strong>
+                                <p style="margin: 5px 0 0 0; color: #333;">
+                                    If you experience difficulty breathing, chest pain, confusion, severe dizziness, 
+                                    or any other severe symptoms, seek emergency medical attention immediately.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons" style="justify-content: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadReport()">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                    <button class="btn btn-primary" onclick="shareReport()">
+                        <i class="fas fa-share-alt"></i> Share with Doctor
+                    </button>
+                </div>
+            `;
+            
+            return html;
+        }
+        
+        // Helper function to get symptom icons
+        function getSymptomIcon(symptom) {
+            const iconMap = {
+                'fever': 'thermometer-half',
+                'cough': 'lungs',
+                'headache': 'head-side-virus',
+                'fatigue': 'tired',
+                'nausea': 'stomach',
+                'pale': 'palette',
+                'breath': 'wind',
+                'chills': 'snowflake',
+                'pain': 'exclamation-triangle',
+                'weakness': 'user-injured',
+                'dizziness': 'dizzy',
+                'cold': 'snowflake',
+                'body': 'user',
+                'ache': 'exclamation'
+            };
+            
+            const symptomLower = symptom.toLowerCase();
+            for (const [key, icon] of Object.entries(iconMap)) {
+                if (symptomLower.includes(key)) {
+                    return icon;
+                }
+            }
+            return 'exclamation-circle';
+        }
+        
+        // ====== UTILITY FUNCTIONS ======
+        function clearMedicalForm() {
+            document.getElementById('analysis-form').reset();
+            fileList.innerHTML = '';
+            resultsContainer.classList.remove('show');
+            resultsContainer.innerHTML = '';
+        }
+        
+        function downloadReport() {
+            alert('Download feature would generate a PDF report of your analysis.');
+        }
+        
+        function shareReport() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Medical Analysis Report',
+                    text: 'Check out my medical analysis report',
+                    url: window.location.href
+                });
+            } else {
+                alert('Share functionality is not supported in your browser. You can copy the URL to share.');
+            }
+        }
+    </script>
+</body>
+</html>

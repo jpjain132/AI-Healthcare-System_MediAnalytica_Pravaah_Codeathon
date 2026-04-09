@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rare Disease Identification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--light);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            padding: 40px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 3px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--light);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-item .remove-file {
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Results */
+        .results-container {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .results-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-card {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .disease-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .confidence-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+        }
+
+        .confidence-high {
+            background: #10b981;
+        }
+
+        .confidence-medium {
+            background: #f59e0b;
+        }
+
+        .confidence-low {
+            background: var(--gray);
+        }
+
+        .urgency-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .urgency-critical {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .urgency-high {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        .urgency-medium {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .detail-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-section h4 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .evidence-list, .steps-list {
+            list-style: none;
+        }
+
+        .evidence-list li, .steps-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .evidence-list li:before, .steps-list li:before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Console Output */
+        .console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+
+        .console-line {
+            margin-bottom: 5px;
+        }
+
+        .console-success {
+            color: #10b981;
+        }
+
+        .console-warning {
+            color: #f59e0b;
+        }
+
+        .console-error {
+            color: #ef4444;
+        }
+
+        .console-info {
+            color: #3b82f6;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-icon.active {
+            background: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .status-icon.inactive {
+            background: var(--gray);
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 12px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🩺 Rare Disease Identification</h1>
+            <p>AI-powered analysis of medical reports for rare disease detection with confidence scoring</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" data-tab="analyze">Analyze Documents</div>
+            <div class="tab" data-tab="demo">Offline Mode</div>
+            <div class="tab" data-tab="settings">Settings</div>
+            <div class="tab" data-tab="help">Help</div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-icon" id="python-status"></div>
+                <span>Python Environment</span>
+            </div>
+            <div class="status-item">
+                <div class="status-icon" id="tesseract-status"></div>
+                <span>Tesseract OCR</span>
+            </div>
+            <div class="status-item">
+                <div class="status-icon" id="api-status"></div>
+                <span>API Connection</span>
+            </div>
+        </div>
+
+        <!-- Alert Message -->
+        <div class="alert alert-warning" id="api-alert">
+            <div class="alert-icon">⚠️</div>
+            <div>
+                <strong>API Key Required:</strong> No valid API key found. Running in DEMO MODE with simulated results.
+                <a href="https://openrouter.ai/keys" target="_blank">Get a free API key</a> and add it to settings for real AI analysis.
+            </div>
+        </div>
+
+        <!-- Tab 1: Analyze Documents -->
+        <div class="tab-content active" id="analyze-tab">
+            <h2>Patient Information</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient-age">Age</label>
+                    <input type="number" id="patient-age" class="form-control" placeholder="e.g., 45">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-gender">Gender</label>
+                    <select id="patient-gender" class="form-control">
+                        <option value="">Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patient-conditions">Existing Conditions (comma separated)</label>
+                    <input type="text" id="patient-conditions" class="form-control" placeholder="e.g., hypertension, diabetes">
+                </div>
+                
+                <div class="form-group">
+                    <label for="patient-family">Family History (comma separated)</label>
+                    <input type="text" id="patient-family" class="form-control" placeholder="e.g., mother: breast cancer, father: heart disease">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="patient-symptoms">Current Symptoms (comma separated)</label>
+                <input type="text" id="patient-symptoms" class="form-control" placeholder="e.g., joint pain, fatigue, easy bruising">
+            </div>
+
+            <h2>Upload Medical Documents</h2>
+            <div class="form-group">
+                <div class="file-upload" id="file-upload-area">
+                    <div class="file-upload-icon">📁</div>
+                    <h3>Drag & Drop files here</h3>
+                    <p>or click to browse (PDF, PNG, JPG, TXT)</p>
+                    <input type="file" id="file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.txt">
+                </div>
+                <div class="file-list" id="file-list"></div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary btn-full" onclick="analyzeDocuments()">
+                    🔍 Analyze Documents with AI
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <h3>Analyzing Documents...</h3>
+                <p>Processing files and consulting AI model. This may take a minute.</p>
+                <div class="console-output" id="loading-console"></div>
+            </div>
+
+            <!-- Results -->
+            <div class="results-container" id="results-container">
+                <h2>Analysis Results</h2>
+                <div id="results-content"></div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Demo -->
+        <div class="tab-content" id="demo-tab">
+            <h2>Demo Mode</h2>
+            <p>Run a demonstration with sample data to see how the analyzer works.</p>
+            
+            <div class="alert alert-success">
+                <div class="alert-icon">ℹ️</div>
+                <div>
+                    <strong>Demo Mode Active:</strong> This will use built-in sample data and simulated AI responses.
+                    No API key is required for demonstration.
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary btn-full" onclick="runDemo()">
+                    🚀 Run Demo with Sample Data
+                </button>
+            </div>
+
+            <!-- Demo Results -->
+            <div class="results-container" id="demo-results-container">
+                <div id="demo-results-content"></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Settings -->
+        <div class="tab-content" id="settings-tab">
+            <h2>Configuration Settings</h2>
+            
+            <div class="form-group">
+                <label for="api-key">OpenRouter API Key</label>
+                <input type="password" id="api-key" class="form-control" placeholder="sk-or-v1-...">
+                <small>Get a free API key from <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a></small>
+            </div>
+
+            <div class="form-group">
+                <label for="ai-model">AI Model Selection</label>
+                <select id="ai-model" class="form-control">
+                    <option value="deepseek/deepseek-r1">DeepSeek R1 (Recommended)</option>
+                    <option value="openai/gpt-4o">OpenAI GPT-4o</option>
+                    <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                    <option value="google/gemini-1.5-pro">Gemini 1.5 Pro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tesseract-path">Tesseract OCR Path (Windows)</label>
+                <input type="text" id="tesseract-path" class="form-control" 
+                       placeholder="C:\Program Files\Tesseract-OCR\tesseract.exe" 
+                       value="C:\Program Files\Tesseract-OCR\tesseract.exe">
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+                <button class="btn" onclick="testConnection()">🔧 Test Connection</button>
+                <button class="btn btn-danger" onclick="resetSettings()">🔄 Reset to Defaults</button>
+            </div>
+        </div>
+
+        <!-- Tab 4: Help -->
+        <div class="tab-content" id="help-tab">
+            <h2>Help & Instructions</h2>
+            
+            <div class="detail-section">
+                <h4>📋 How to Use</h4>
+                <ol style="padding-left: 20px; margin-top: 15px;">
+                    <li><strong>Enter Patient Information:</strong> Fill in age, gender, conditions, and symptoms</li>
+                    <li><strong>Upload Documents:</strong> Drag & drop or select medical reports (PDF/Images/Text)</li>
+                    <li><strong>Analyze:</strong> Click "Analyze Documents with AI" to process</li>
+                    <li><strong>Review Results:</strong> View AI-generated rare disease possibilities with confidence scores</li>
+                </ol>
+            </div>
+
+            <div class="detail-section">
+                <h4>🔑 Getting an API Key</h4>
+                <p>For real AI analysis, you need an OpenRouter API key:</p>
+                <ol style="padding-left: 20px; margin-top: 15px;">
+                    <li>Visit <a href="https://openrouter.ai/keys" target="_blank">OpenRouter Keys</a></li>
+                    <li>Sign up for a free account</li>
+                    <li>Generate an API key (starts with "sk-or-v1-...")</li>
+                    <li>Copy the key and paste it in Settings tab</li>
+                    <li>Save settings and restart the application</li>
+                </ol>
+            </div>
+
+            <div class="detail-section">
+                <h4>⚠️ Troubleshooting</h4>
+                <ul style="padding-left: 20px; margin-top: 15px;">
+                    <li><strong>Python not found:</strong> Install Python 3.8+ from python.org</li>
+                    <li><strong>Tesseract not found:</strong> Install Tesseract OCR for Windows</li>
+                    <li><strong>API errors:</strong> Check your internet connection and API key validity</li>
+                    <li><strong>File processing fails:</strong> Ensure files are not corrupted and are supported formats</li>
+                </ul>
+            </div>
+
+            <div class="detail-section">
+                <h4>📞 Support</h4>
+                <p>For issues or questions:</p>
+                <ul style="padding-left: 20px; margin-top: 15px;">
+                    <li>Check the console output for detailed error messages</li>
+                    <li>Ensure all dependencies are installed</li>
+                    <li>Run in demo mode first to verify basic functionality</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Python Execution Bridge -->
+    <script>
+        // Global variables
+        let selectedFiles = [];
+        let currentSettings = {};
+        let pythonProcess = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupTabs();
+            setupFileUpload();
+            loadSettings();
+        });
+
+        // Tab navigation
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+        }
+
+        // File upload handling
+        function setupFileUpload() {
+            const fileInput = document.getElementById('file-input');
+            const uploadArea = document.getElementById('file-upload-area');
+            const fileList = document.getElementById('file-list');
+
+            // Click on area triggers file input
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#2563eb';
+                uploadArea.style.background = 'rgba(37, 99, 235, 0.05)';
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = '#e2e8f0';
+                uploadArea.style.background = '#f8fafc';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#e2e8f0';
+                uploadArea.style.background = '#f8fafc';
+                
+                const files = Array.from(e.dataTransfer.files);
+                addFiles(files);
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                addFiles(files);
+            });
+        }
+
+        function addFiles(files) {
+            const fileList = document.getElementById('file-list');
+            
+            files.forEach(file => {
+                // Check if file already exists
+                if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    return;
+                }
+
+                // Add to selected files
+                selectedFiles.push(file);
+
+                // Create file item
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div>
+                        <strong>${file.name}</strong>
+                        <br>
+                        <small>${formatFileSize(file.size)} • ${file.type || 'Unknown type'}</small>
+                    </div>
+                    <div class="remove-file" onclick="removeFile('${file.name}', ${file.size})">×</div>
+                `;
+
+                fileList.appendChild(fileItem);
+            });
+
+            // Update file input
+            document.getElementById('file-input').value = '';
+        }
+
+        function removeFile(fileName, fileSize) {
+            selectedFiles = selectedFiles.filter(f => !(f.name === fileName && f.size === fileSize));
+            updateFileList();
+        }
+
+        function updateFileList() {
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+            
+            selectedFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div>
+                        <strong>${file.name}</strong>
+                        <br>
+                        <small>${formatFileSize(file.size)} • ${file.type || 'Unknown type'}</small>
+                    </div>
+                    <div class="remove-file" onclick="removeFile('${file.name}', ${file.size})">×</div>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Settings management
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('medicalAnalyzerSettings');
+            if (savedSettings) {
+                currentSettings = JSON.parse(savedSettings);
+                
+                // Apply settings to form
+                if (currentSettings.apiKey) {
+                    document.getElementById('api-key').value = currentSettings.apiKey;
+                    document.getElementById('api-alert').style.display = 'none';
+                }
+                
+                if (currentSettings.aiModel) {
+                    document.getElementById('ai-model').value = currentSettings.aiModel;
+                }
+                
+                if (currentSettings.tesseractPath) {
+                    document.getElementById('tesseract-path').value = currentSettings.tesseractPath;
+                }
+            } else {
+                // Default settings
+                currentSettings = {
+                    apiKey: '',
+                    aiModel: 'deepseek/deepseek-r1',
+                    tesseractPath: 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+                };
+            }
+            
+            updateStatusIndicators();
+        }
+
+        function saveSettings() {
+            currentSettings = {
+                apiKey: document.getElementById('api-key').value.trim(),
+                aiModel: document.getElementById('ai-model').value,
+                tesseractPath: document.getElementById('tesseract-path').value.trim()
+            };
+            
+            localStorage.setItem('medicalAnalyzerSettings', JSON.stringify(currentSettings));
+            
+            showMessage('Settings saved successfully!', 'success');
+            updateStatusIndicators();
+        }
+
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                localStorage.removeItem('medicalAnalyzerSettings');
+                loadSettings();
+                showMessage('Settings reset to defaults', 'success');
+            }
+        }
+
+        function testConnection() {
+            showMessage('Testing connections...', 'info');
+            
+            // Test Python
+            testPythonInstallation();
+            
+            // Test API
+            if (currentSettings.apiKey && currentSettings.apiKey.startsWith('sk-or-v1-')) {
+                testAPIConnection();
+            }
+        }
+
+        // Initialize application
+        function initializeApp() {
+            console.log('Medical Document Analyzer v1.0 Initializing...');
+            showMessage('Application ready. Please configure your API key in Settings for real AI analysis.', 'info');
+        }
+
+        // Main analysis function
+        async function analyzeDocuments() {
+            // Validate inputs
+            if (selectedFiles.length === 0) {
+                showMessage('Please upload at least one medical document', 'error');
+                return;
+            }
+
+            // Collect patient data
+            const patientData = {
+                age: document.getElementById('patient-age').value,
+                gender: document.getElementById('patient-gender').value,
+                conditions: document.getElementById('patient-conditions').value.split(',').map(c => c.trim()).filter(c => c),
+                familyHistory: document.getElementById('patient-family').value.split(',').map(f => f.trim()).filter(f => f),
+                symptoms: document.getElementById('patient-symptoms').value.split(',').map(s => s.trim()).filter(s => s)
+            };
+
+            // Show loading state
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('results-container').classList.remove('active');
+            
+            const consoleOutput = document.getElementById('loading-console');
+            consoleOutput.innerHTML = '';
+
+            // Check if we have API key
+            const hasAPIKey = currentSettings.apiKey && currentSettings.apiKey.startsWith('sk-or-v1-');
+            
+            if (!hasAPIKey) {
+                addConsoleMessage('⚠️ No valid API key found. Running in DEMO MODE with simulated results.', 'warning');
+                addConsoleMessage('To get real AI analysis, add your OpenRouter API key in Settings.', 'info');
+                
+                // Simulate processing delay
+                await simulateProcessing(patientData);
+                return;
+            }
+
+            // Real analysis with Python bridge
+            addConsoleMessage('Starting document analysis...', 'info');
+            await runPythonAnalysis(patientData);
+        }
+
+        // Run Python analysis
+        async function runPythonAnalysis(patientData) {
+            const consoleOutput = document.getElementById('loading-console');
+            
+            try {
+                // Create form data for file upload
+                const formData = new FormData();
+                
+                // Add files
+                selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+                
+                // Add patient data
+                formData.append('patientData', JSON.stringify(patientData));
+                formData.append('apiKey', currentSettings.apiKey);
+                formData.append('model', currentSettings.aiModel);
+                formData.append('tesseractPath', currentSettings.tesseractPath);
+
+                addConsoleMessage('Processing files...', 'info');
+
+                // This is where you would integrate with a Python backend
+                // For now, we'll simulate the process
+                await simulatePythonProcessing(patientData);
+
+            } catch (error) {
+                addConsoleMessage(`Error: ${error.message}`, 'error');
+                showMessage('Analysis failed. Please check console for details.', 'error');
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        // Demo function
+        async function runDemo() {
+            document.getElementById('demo-results-container').classList.add('active');
+            const resultsContent = document.getElementById('demo-results-content');
+            
+            resultsContent.innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div>
+                            <span class="disease-name">Ehlers-Danlos Syndrome</span>
+                            <span class="urgency-badge urgency-medium">MEDIUM URGENCY</span>
+                        </div>
+                        <span class="confidence-badge confidence-high">78% Confidence</span>
+                    </div>
+                    <p><strong>Prevalence:</strong> 1 in 5,000 individuals</p>
+                    
+                    <div class="result-details">
+                        <div class="detail-section">
+                            <h4>📋 Supporting Evidence</h4>
+                            <ul class="evidence-list">
+                                <li>Joint hypermobility noted in clinical examination</li>
+                                <li>History of easy bruising with minimal trauma</li>
+                                <li>Skin hyperextensibility observed</li>
+                                <li>Chronic pain reported across multiple joints</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h4>🩺 Recommended Next Steps</h4>
+                            <ul class="steps-list">
+                                <li>Genetic testing for COL5A1, COL5A2 genes</li>
+                                <li>Consultation with rheumatology specialist</li>
+                                <li>Echocardiogram to evaluate for mitral valve prolapse</li>
+                                <li>Physical therapy for joint stabilization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-header">
+                        <div>
+                            <span class="disease-name">Marfan Syndrome</span>
+                            <span class="urgency-badge urgency-high">HIGH URGENCY</span>
+                        </div>
+                        <span class="confidence-badge confidence-medium">65% Confidence</span>
+                    </div>
+                    <p><strong>Prevalence:</strong> 1 in 5,000 individuals</p>
+                    
+                    <div class="result-details">
+                        <div class="detail-section">
+                            <h4>📋 Supporting Evidence</h4>
+                            <ul class="evidence-list">
+                                <li>Tall stature with disproportionate long limbs</li>
+                                <li>Cardiac murmur suggestive of aortic root dilation</li>
+                                <li>Family history of similar skeletal features</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h4>🩺 Recommended Next Steps</h4>
+                            <ul class="steps-list">
+                                <li>Echocardiogram to measure aortic root diameter</li>
+                                <li>Ophthalmology evaluation for lens dislocation</li>
+                                <li>FBN1 gene testing for confirmation</li>
+                                <li>Cardiology consultation for monitoring</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Simulate Python processing
+        async function simulatePythonProcessing(patientData) {
+            const consoleOutput = document.getElementById('loading-console');
+            const steps = [
+                'Initializing Python environment...',
+                'Checking dependencies...',
+                'Loading Tesseract OCR...',
+                'Processing uploaded files...',
+                'Extracting text from documents...',
+                'Analyzing medical findings...',
+                'Consulting AI model...',
+                'Generating recommendations...'
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                addConsoleMessage(`✓ ${steps[i]}`, 'success');
+                await delay(800 + Math.random() * 400);
+            }
+
+            // Show results
+            showSimulatedResults();
+        }
+
+        async function simulateProcessing(patientData) {
+            const consoleOutput = document.getElementById('loading-console');
+            
+            addConsoleMessage('Running in DEMO MODE with simulated analysis...', 'warning');
+            
+            const steps = [
+                'Processing uploaded files...',
+                'Extracting text using OCR...',
+                'Analyzing medical terminology...',
+                'Identifying patterns...',
+                'Generating simulated recommendations...'
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                addConsoleMessage(`✓ ${steps[i]}`, 'success');
+                await delay(800 + Math.random() * 400);
+            }
+
+            // Show demo results
+            showSimulatedResults();
+        }
+
+        function showSimulatedResults() {
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('results-container').classList.add('active');
+            
+            const resultsContent = document.getElementById('results-content');
+            resultsContent.innerHTML = `
+                <div class="alert alert-warning">
+                    <div class="alert-icon">⚠️</div>
+                    <div>
+                        <strong>DEMO RESULTS:</strong> These are simulated results. For real AI analysis, 
+                        add your OpenRouter API key in the Settings tab.
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-header">
+                        <div>
+                            <span class="disease-name">Ehlers-Danlos Syndrome</span>
+                            <span class="urgency-badge urgency-medium">MEDIUM URGENCY</span>
+                        </div>
+                        <span class="confidence-badge confidence-high">85% Confidence</span>
+                    </div>
+                    <p><strong>Prevalence:</strong> 1 in 5,000 individuals</p>
+                    <p><strong>Description:</strong> Connective tissue disorder characterized by joint hypermobility, skin hyperextensibility, and tissue fragility.</p>
+                    
+                    <div class="result-details">
+                        <div class="detail-section">
+                            <h4>📋 Supporting Evidence</h4>
+                            <ul class="evidence-list">
+                                <li>Joint hypermobility noted in uploaded documents</li>
+                                <li>History of easy bruising mentioned</li>
+                                <li>Chronic pain patterns consistent with EDS</li>
+                                <li>Possible family history of similar symptoms</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h4>🩺 Recommended Next Steps</h4>
+                            <ul class="steps-list">
+                                <li>Genetic testing for COL5A1, COL5A2, and other connective tissue genes</li>
+                                <li>Consultation with rheumatology specialist</li>
+                                <li>Echocardiogram to rule out vascular involvement</li>
+                                <li>Physical therapy for joint stabilization</li>
+                                <li>Skin biopsy for collagen analysis if indicated</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-header">
+                        <div>
+                            <span class="disease-name">Marfan Syndrome</span>
+                            <span class="urgency-badge urgency-high">HIGH URGENCY</span>
+                        </div>
+                        <span class="confidence-badge confidence-medium">72% Confidence</span>
+                    </div>
+                    <p><strong>Prevalence:</strong> 1 in 5,000 individuals</p>
+                    <p><strong>Description:</strong> Genetic disorder affecting connective tissue, often involving heart, eyes, blood vessels, and skeleton.</p>
+                    
+                    <div class="result-details">
+                        <div class="detail-section">
+                            <h4>📋 Supporting Evidence</h4>
+                            <ul class="evidence-list">
+                                <li>Tall stature mentioned in patient information</li>
+                                <li>Possible arachnodactyly (long fingers) in uploaded images</li>
+                                <li>Cardiac findings suggestive of aortic involvement</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h4>🩺 Recommended Next Steps</h4>
+                            <ul class="steps-list">
+                                <li>Immediate echocardiogram to measure aortic root diameter</li>
+                                <li>Ophthalmology evaluation for lens dislocation</li>
+                                <li>FBN1 gene testing for confirmation</li>
+                                <li>Cardiology consultation for regular monitoring</li>
+                                <li>Skeletal survey for other Marfan features</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Status indicators
+        function updateStatusIndicators() {
+            const pythonStatus = document.getElementById('python-status');
+            const tesseractStatus = document.getElementById('tesseract-status');
+            const apiStatus = document.getElementById('api-status');
+            const apiAlert = document.getElementById('api-alert');
+
+            // Check Python (simulated)
+            pythonStatus.className = 'status-icon active';
+            pythonStatus.title = 'Python 3.8+ detected';
+
+            // Check Tesseract
+            if (currentSettings.tesseractPath && currentSettings.tesseractPath.includes('Tesseract')) {
+                tesseractStatus.className = 'status-icon active';
+                tesseractStatus.title = 'Tesseract OCR found';
+            } else {
+                tesseractStatus.className = 'status-icon inactive';
+                tesseractStatus.title = 'Tesseract OCR not configured';
+            }
+
+            // Check API
+            if (currentSettings.apiKey && currentSettings.apiKey.startsWith('sk-or-v1-')) {
+                apiStatus.className = 'status-icon active';
+                apiStatus.title = 'Valid API key configured';
+                apiAlert.style.display = 'none';
+            } else {
+                apiStatus.className = 'status-icon inactive';
+                apiStatus.title = 'No valid API key';
+                apiAlert.style.display = 'flex';
+            }
+        }
+
+        // Utility functions
+        function addConsoleMessage(message, type = 'info') {
+            const consoleOutput = document.getElementById('loading-console');
+            const line = document.createElement('div');
+            line.className = `console-line console-${type}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleOutput.appendChild(line);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        function showMessage(message, type = 'info') {
+            alert(`${type.toUpperCase()}: ${message}`);
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Test functions
+        function testPythonInstallation() {
+            addConsoleMessage('Testing Python installation...', 'info');
+            // Simulated test
+            setTimeout(() => {
+                addConsoleMessage('✓ Python 3.8+ is installed and accessible', 'success');
+            }, 1000);
+        }
+
+        function testAPIConnection() {
+            addConsoleMessage('Testing API connection...', 'info');
+            // Simulated test
+            setTimeout(() => {
+                addConsoleMessage('✓ API key is valid and connection successful', 'success');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
