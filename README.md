@@ -1,4 +1,4 @@
-# Pravaah_Codeathon
+# MediAnalytica — an AI-ML healthcare website
 
 Our team built MediAnalytica — an AI-ML healthcare website that analyzes medical documents, processes prescriptions, and detects rare diseases using LLM integration (DeepSeek API) 🧠⚕️
 
