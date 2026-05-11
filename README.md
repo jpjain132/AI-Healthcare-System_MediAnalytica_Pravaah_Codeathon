@@ -11,4 +11,5 @@ Our team built MediAnalytica — an AI-ML healthcare website that analyzes medic
 🚀 Deployed live on Netlify
 
 🌐 View our work demo: https://lnkd.in/g_zgWM8m
+
 You can explore as a guest or login here: https://lnkd.in/gwFQBKjy
