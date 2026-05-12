@@ -7,7 +7,7 @@ Our team built MediAnalytica — an AI-ML healthcare website that analyzes medic
 💊 Prescription Safety Analyzer — AI-powered safety analysis, drug-interaction checks, and clinical validation from prescription images.
 🧬 Rare Disease Detection — Intelligent medical report analysis to identify rare disease patterns.
 
-⚙️ Tech stack: HTML, CSS, TypeScript, JSON, AI/ML, and LLM integration.
+⚙️ Tech stack: HTML, CSS, TypeScript, JSON, Python, AI/ML, and LLM integration.
 🚀 Deployed live on Netlify
 
 🌐 View our work demo: https://lnkd.in/g_zgWM8m
