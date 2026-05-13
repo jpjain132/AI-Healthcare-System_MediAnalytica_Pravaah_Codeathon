@@ -1067,10 +1067,5 @@ workflow diagrams
 
 ---
 
-# 👨‍💻 Developed By
-
-## Jinpragya Jain
-
-Machine Learning Engineer | AI Researcher | Healthcare AI Developer
 
 ---
