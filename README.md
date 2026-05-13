@@ -452,7 +452,7 @@ Measures balance between:
 
 Formula:
 
-:contentReference[oaicite:0]{index=0}
+F1= (2 * Precision * Recall)/(Precision + Recall)
 
 ---
 
