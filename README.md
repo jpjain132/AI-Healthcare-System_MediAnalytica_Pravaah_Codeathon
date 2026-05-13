@@ -18,7 +18,7 @@ You can explore as a guest or login here: https://medical-app-api.netlify.app/lo
 
 # 📌 Project Overview
 
-Smart Health Assistant is a full-stack AI-powered healthcare intelligence platform designed to automate:
+MediAnalytica is a full-stack AI-powered healthcare intelligence platform designed to automate:
 
 - Medical document analysis
 - Disease prediction assistance
