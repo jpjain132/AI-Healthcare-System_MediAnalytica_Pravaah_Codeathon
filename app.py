@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import requests
+import os
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 API_URL = "http://127.0.0.1:8000/analyze"
 
